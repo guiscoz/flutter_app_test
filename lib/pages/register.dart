@@ -23,6 +23,39 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _passwordController = TextEditingController();
   String? _token;
 
+  void _performRegister() async {
+    final String name = _nameController.text;
+    final String email = _emailController.text;
+    final String password = _passwordController.text;
+
+    try {
+      final response = await http.post(
+        Uri.parse('${AppConfig.apiBaseUrl}register'),
+        body: {
+          'name': name,
+          'email': email,
+          'password': password,
+        },
+      );
+
+      if (response.statusCode == 201) {
+        final data = json.decode(response.body);
+        final token = data['token'];
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('token', token);
+
+        Navigator.pushNamed(context, '/');
+      } else {
+        final errorMessage = 'Erro na chamada à API: ${response.statusCode}';
+        print(errorMessage);
+      }
+    } catch (e) {
+      final errorMessage = 'Erro na chamada à API: $e';
+      print(errorMessage);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,38 +98,5 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ),
     );
-  }
-
-  void _performRegister() async {
-    final String name = _nameController.text;
-    final String email = _emailController.text;
-    final String password = _passwordController.text;
-
-    try {
-      final response = await http.post(
-        Uri.parse('${AppConfig.apiBaseUrl}register'),
-        body: {
-          'name': name,
-          'email': email,
-          'password': password,
-        },
-      );
-
-      if (response.statusCode == 201) {
-        final data = json.decode(response.body);
-        final token = data['token'];
-
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString('token', token);
-
-        Navigator.pushNamed(context, '/');
-      } else {
-        final errorMessage = 'Erro na chamada à API: ${response.statusCode}';
-        print(errorMessage);
-      }
-    } catch (e) {
-      final errorMessage = 'Erro na chamada à API: $e';
-      print(errorMessage);
-    }
   }
 }

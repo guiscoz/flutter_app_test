@@ -18,6 +18,16 @@ class Navbar extends StatelessWidget implements PreferredSizeWidget {
     return await authHandler.isAuthenticated();
   }
 
+  Future<void> _performLogout(BuildContext context) async {
+    try {
+      await authHandler.logout();
+      Navigator.pushNamed(context, '/');
+    } catch (e) {
+      final errorMessage = 'Erro durante o logout: $e';
+      print(errorMessage);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<bool>(
@@ -70,15 +80,5 @@ class Navbar extends StatelessWidget implements PreferredSizeWidget {
         }
       },
     );
-  }
-
-  Future<void> _performLogout(BuildContext context) async {
-    try {
-      await authHandler.logout();
-      Navigator.pushNamed(context, '/');
-    } catch (e) {
-      final errorMessage = 'Erro durante o logout: $e';
-      print(errorMessage);
-    }
   }
 }

@@ -26,6 +26,35 @@ class _UpdatePageState extends State<UpdatePage> {
     return await authHandler.isAuthenticated();
   }
 
+  void _performUpdate() async {
+    final String name = _nameController.text;
+    final String email = _emailController.text;
+    final String password = _passwordController.text;
+
+    try {
+      final response = await http.post(
+        Uri.parse('${AppConfig.apiBaseUrl}current_user/update_data?_method=PUT'),
+        headers: {'Authorization': 'Bearer ${await authHandler.getToken()}'},
+        body: {
+          'name': name,
+          'email': email,
+          'password': password,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        Navigator.pushNamed(context, '/profile');
+      } else {
+        await Future.delayed(Duration.zero);
+        final errorMessage = 'Erro na chamada à API: ${response.statusCode}';
+        print(errorMessage);
+      }
+    } catch (e) {
+      final errorMessage = 'Erro na chamada à API: $e';
+      print(errorMessage);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<bool>(
@@ -79,33 +108,5 @@ class _UpdatePageState extends State<UpdatePage> {
         }
       }
     );
-  }
-
-  void _performUpdate() async {
-  final String name = _nameController.text;
-  final String email = _emailController.text;
-  final String password = _passwordController.text;
-
-  try {
-    final response = await http.post(
-      Uri.parse('${AppConfig.apiBaseUrl}current_user/update_data?_method=PUT'),
-      headers: {'Authorization': 'Bearer ${await authHandler.getToken()}'},
-      body: {
-        'name': name,
-        'email': email,
-        'password': password,
-      },
-    );
-
-    if (response.statusCode == 200) {
-        Navigator.pushNamed(context, '/profile');
-      } else {
-        final errorMessage = 'Erro na chamada à API: ${response.statusCode}';
-        print(errorMessage);
-      }
-    } catch (e) {
-      final errorMessage = 'Erro na chamada à API: $e';
-      print(errorMessage);
-    }
   }
 }
