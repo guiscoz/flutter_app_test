@@ -86,12 +86,10 @@ class _UpdatePageState extends State<UpdatePage> {
   final String email = _emailController.text;
   final String password = _passwordController.text;
 
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('token');
-
   try {
     final response = await http.post(
       Uri.parse('${AppConfig.apiBaseUrl}current_user/update_data?_method=PUT'),
+      headers: {'Authorization': 'Bearer ${await authHandler.getToken()}'},
       body: {
         'name': name,
         'email': email,
@@ -99,7 +97,7 @@ class _UpdatePageState extends State<UpdatePage> {
       },
     );
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
         Navigator.pushNamed(context, '/profile');
       } else {
         final errorMessage = 'Erro na chamada à API: ${response.statusCode}';

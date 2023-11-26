@@ -33,21 +33,14 @@ class _ProfilePageState extends State<ProfilePage> {
     if (response.statusCode == 200) {
       setState(() {
         final data = json.decode(response.body);
-        final dataUser = data['user'];
-        final name = dataUser.name; 
         if (data['user'] != null) {
           currentUser = User.fromJson(data['user']);
         }
       });
     } else {
-      print('Erro na requisição à API: ${response.statusCode}');
+      final errorMessage = 'Erro na requisição à API: ${response.statusCode}';
+      print(errorMessage);
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchUserProfile();
   }
 
   Future<void> _removeAccount() async {
@@ -57,7 +50,7 @@ class _ProfilePageState extends State<ProfilePage> {
         headers: {'Authorization': 'Bearer ${await authHandler.getToken()}'},
       );
 
-      if (response.statusCode == 204) {
+      if (response.statusCode == 200) {
         Navigator.pushNamed(context, '/');
       } else {
         final errorMessage = 'Erro ao remover a conta: ${response.statusCode}';
@@ -70,13 +63,19 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _fetchUserProfile();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder<bool>(
       future: authHandler.isAuthenticated(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // Aguarde até que a verificação de autenticação seja concluída
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         } else if (!snapshot.data!) {
           // Usuário não autenticado, redirecione para a página de login
           Navigator.pushNamed(context, '/login');
@@ -90,8 +89,10 @@ class _ProfilePageState extends State<ProfilePage> {
             body: Center(
               child: Column(
                 children: [
-                  Text('Name: ${currentUser!.name}'),
-                  Text('Email: ${currentUser!.email}'),
+                  if (currentUser != null)
+                    Text('Name: ${currentUser!.name}'),
+                  if (currentUser != null)
+                    Text('Email: ${currentUser!.email}'),
                   IconButton(
                     icon: const Icon(Icons.edit),
                     onPressed: () {
@@ -99,11 +100,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     },
                   ),
                   IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () {
-                    _removeAccount();
-                  },
-                ),
+                    icon: const Icon(Icons.delete),
+                    onPressed: () {
+                      _removeAccount();
+                    },
+                  ),
                 ],
               ),
             ),
