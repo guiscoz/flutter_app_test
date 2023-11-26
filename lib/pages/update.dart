@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../auth_handler.dart';
+import '../utils/api_error_handler.dart';
+import '../utils/auth_handler.dart';
 import '../components/navbar.dart';
-import '../app_config.dart';
+import '../utils/app_config.dart';
 
 class UpdatePage extends StatefulWidget {
   final AuthHandler authHandler;
@@ -45,13 +46,10 @@ class _UpdatePageState extends State<UpdatePage> {
       if (response.statusCode == 200) {
         Navigator.pushNamed(context, '/profile');
       } else {
-        await Future.delayed(Duration.zero);
-        final errorMessage = 'Erro na chamada à API: ${response.statusCode}';
-        print(errorMessage);
+        handleApiError(context, 'Erro ${response.statusCode}: ${response.reasonPhrase}');
       }
     } catch (e) {
-      final errorMessage = 'Erro na chamada à API: $e';
-      print(errorMessage);
+      handleApiError(context, 'Erro na chamada à API: $e');
     }
   }
 

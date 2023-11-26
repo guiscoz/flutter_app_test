@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../auth_handler.dart';
+import '../utils/api_error_handler.dart';
+import '../utils/auth_handler.dart';
 import '../models/user_model.dart';
-import '../app_config.dart';
+import '../utils/app_config.dart';
 import '../components/navbar.dart';
 
 class HomePage extends StatefulWidget {
@@ -24,24 +25,28 @@ class _HomePageState extends State<HomePage> {
   int totalPages = 1;
 
   Future<void> _fetchUsers(int page) async {
-    final response = await http.get(
-      Uri.parse('${AppConfig.apiBaseUrl}list_users?page=$page'),
-    );
+    try {
+      final response = await http.get(
+        Uri.parse('${AppConfig.apiBaseUrl}list_users?page=$page'),
+      );
 
-    if (response.statusCode == 200) {
-      setState(() {
-        final data = json.decode(response.body);
+      if (response.statusCode == 200) {
+        setState(() {
+          final data = json.decode(response.body);
 
-        if (data['users'].containsKey('data')) {
-          userList = List<User>.from(data['users']['data'].map((userData) => User.fromJson(userData)));
-          currentPage = data['users']['current_page'];
-          totalPages = data['users']['last_page'];
-        } else {
-          print('Chave "data" não encontrada na resposta da API');
-        }
-      });
-    } else {
-      print('Erro na requisição à API: ${response.statusCode}');
+          if (data['users'].containsKey('data')) {
+            userList = List<User>.from(data['users']['data'].map((userData) => User.fromJson(userData)));
+            currentPage = data['users']['current_page'];
+            totalPages = data['users']['last_page'];
+          } else {
+            handleApiError(context, 'Não foi possível encontrar dados dos usuários');
+          }
+        });
+      } else {
+        handleApiError(context, '${response.statusCode}: ${response.reasonPhrase}');
+      }
+    } catch(e) {
+      handleApiError(context, 'Erro na chamada à API: $e');
     }
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../auth_handler.dart'; 
+import '../utils/api_error_handler.dart';
+import '../utils/auth_handler.dart'; 
 
 class Navbar extends StatelessWidget implements PreferredSizeWidget {
   const Navbar({
@@ -23,8 +24,7 @@ class Navbar extends StatelessWidget implements PreferredSizeWidget {
       await authHandler.logout();
       Navigator.pushNamed(context, '/');
     } catch (e) {
-      final errorMessage = 'Erro durante o logout: $e';
-      print(errorMessage);
+      handleApiError(context, 'Erro durante o logout: $e');
     }
   }
 

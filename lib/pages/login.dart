@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_app_test/auth_handler.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../components/navbar.dart';
-import '../app_config.dart';
+import '../utils/app_config.dart';
+import '../utils/auth_handler.dart';
+import '../utils/api_error_handler.dart';
 
 class LoginPage extends StatefulWidget {
   final AuthHandler authHandler;
@@ -20,7 +21,6 @@ class _LoginPageState extends State<LoginPage> {
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  String? _token;
 
   void _performLogin() async {
     final String email = _emailController.text;
@@ -44,12 +44,10 @@ class _LoginPageState extends State<LoginPage> {
 
         Navigator.pushNamed(context, '/');
       } else {
-        final errorMessage = 'Erro na chamada à API: ${response.statusCode}';
-        print(errorMessage);
+        handleApiError(context, 'Erro ${response.statusCode}: ${response.reasonPhrase}');
       }
     } catch (e) {
-      final errorMessage = 'Erro na chamada à API: $e';
-      print(errorMessage);
+      handleApiError(context, 'Erro na chamada à API: $e');
     }
   }
 
@@ -82,10 +80,6 @@ class _LoginPageState extends State<LoginPage> {
               },
               child: const Text('Login'),
             ),
-            if (_token != null) ...[
-              const SizedBox(height: 16),
-              Text('Token: $_token'),
-            ],
           ],
         ),
       ),

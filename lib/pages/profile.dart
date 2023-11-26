@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../auth_handler.dart';
+import '../utils/auth_handler.dart';
 import '../models/user_model.dart';
-import '../app_config.dart';
+import '../utils/app_config.dart';
 import '../components/navbar.dart';
+import '../utils/api_error_handler.dart';
 
 class ProfilePage extends StatefulWidget {
   final AuthHandler authHandler;
@@ -25,21 +26,24 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _fetchUserProfile() async {
-    final response = await http.get(
-      Uri.parse('${AppConfig.apiBaseUrl}current_user'),
-      headers: {'Authorization': 'Bearer ${await authHandler.getToken()}'},
-    );
+    try {
+      final response = await http.get(
+        Uri.parse('${AppConfig.apiBaseUrl}current_user'),
+        headers: {'Authorization': 'Bearer ${await authHandler.getToken()}'},
+      );
 
-    if (response.statusCode == 200) {
-      setState(() {
-        final data = json.decode(response.body);
-        if (data['user'] != null) {
-          currentUser = User.fromJson(data['user']);
-        }
-      });
-    } else {
-      final errorMessage = 'Erro na requisição à API: ${response.statusCode}';
-      print(errorMessage);
+      if (response.statusCode == 200) {
+        setState(() {
+          final data = json.decode(response.body);
+          if (data['user'] != null) {
+            currentUser = User.fromJson(data['user']);
+          }
+        });
+      } else {
+        handleApiError(context, 'Erro ${response.statusCode}: ${response.reasonPhrase}');
+      }
+    } catch(e) {
+      handleApiError(context, 'Erro na chamada à API: $e');
     }
   }
 
@@ -53,12 +57,10 @@ class _ProfilePageState extends State<ProfilePage> {
       if (response.statusCode == 200) {
         Navigator.pushNamed(context, '/');
       } else {
-        final errorMessage = 'Erro ao remover a conta: ${response.statusCode}';
-        print(errorMessage);
+        handleApiError(context, 'Erro ${response.statusCode}: ${response.reasonPhrase}');
       }
     } catch (e) {
-      final errorMessage = 'Erro ao remover a conta: $e';
-      print(errorMessage);
+      handleApiError(context, 'Erro na chamada à API: $e');
     }
   }
 
