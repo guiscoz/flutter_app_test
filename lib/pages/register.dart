@@ -68,6 +68,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void _performRegister() async {
+    final String name = _nameController.text;
     final String email = _emailController.text;
     final String password = _passwordController.text;
 
@@ -75,6 +76,7 @@ class _RegisterPageState extends State<RegisterPage> {
       final response = await http.post(
         Uri.parse('${AppConfig.apiBaseUrl}register'),
         body: {
+          'name': name,
           'email': email,
           'password': password,
         },

@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../auth_handler.dart';
@@ -39,11 +37,11 @@ class _HomePageState extends State<HomePage> {
           currentPage = data['users']['current_page'];
           totalPages = data['users']['last_page'];
         } else {
-          stderr.writeln('Chave "data" não encontrada na resposta da API');
+          print('Chave "data" não encontrada na resposta da API');
         }
       });
     } else {
-      stderr.writeln('Erro na requisição à API: ${response.statusCode}');
+      print('Erro na requisição à API: ${response.statusCode}');
     }
   }
 

@@ -49,6 +49,20 @@ class Navbar extends StatelessWidget implements PreferredSizeWidget {
                     Navigator.pushNamed(context, '/register');
                   },
                 ),
+              if (authenticated)
+                IconButton(
+                  icon: const Icon(Icons.account_circle_outlined),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/profile');
+                  },
+                ),
+              if (authenticated)
+                IconButton(
+                  icon: const Icon(Icons.logout),
+                  onPressed: () async {
+                    await _performLogout(context);
+                  },
+                ),
             ],
           );
         } else {
@@ -56,5 +70,15 @@ class Navbar extends StatelessWidget implements PreferredSizeWidget {
         }
       },
     );
+  }
+
+  Future<void> _performLogout(BuildContext context) async {
+    try {
+      await authHandler.logout();
+      Navigator.pushNamed(context, '/');
+    } catch (e) {
+      final errorMessage = 'Erro durante o logout: $e';
+      print(errorMessage);
+    }
   }
 }

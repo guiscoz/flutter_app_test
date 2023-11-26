@@ -1,16 +1,10 @@
 # flutter_app_test
 
-A new Flutter project.
+Um projeto de teste onde uso uma api do Laravel para fazer autenticação em um aplicativo. Nele é possível ver a lista de usuários cadastrados, fazer login e cadastro, deslogar, atualizar seus dados e remover sua conta.
+Antes de tudo, é necessário ter acesso a este repositório: https://github.com/guiscoz/laravelApiApp
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Para rodar o projeto do Flutter é recomendável ter o Android Studio instalado junto com o SDK e o VSCode. Você pode criar um emulador de android ou executar de outras formas. 
+Se você utilizar o VSCode para a execução do projeto, é necessário instalar as extensões Dart e Flutter. 
+Para usar um emulador de android, pressione F1, procure a opção 'Flutter: Launch Emulator' e selecione o aparelho a ser emulador.
+Também é possível selecione o aparelho ao pressionar CTRL Shift P e selecionar a opção 'Flutter: Select Device'.
+Para executar o projeto, basta pressionar F5.

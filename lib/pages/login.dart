@@ -47,7 +47,6 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                // Lógica de login aqui
                 _performLogin();
               },
               child: const Text('Login'),
